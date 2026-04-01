@@ -71,7 +71,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: web-
+          app-name: web-new
           slot-name: Production
           resource-group-name: demo38
           images: demo50.azurecr.io/hello-python:v18
