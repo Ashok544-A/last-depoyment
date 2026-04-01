@@ -76,4 +76,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: web-
+          resource-group-name: demo38
           slot-name: Production
