@@ -78,3 +78,4 @@ jobs:
           app-name: web-
           resource-group-name: demo38
           slot-name: Production
+          images: demo50.azurecr.io/hello-python:v${{ github.run_number }}
