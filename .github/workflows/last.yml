@@ -22,7 +22,7 @@ jobs:
       - name: Login to ACR
         uses: docker/login-action@v3
         with:
-          registry: demo3.azurecr.io
+          registry: demo50.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
@@ -31,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: demo3.azurecr.io/hello-python:v${{ github.run_number }}
+          tags: demo50.azurecr.io/hello-python:v${{ github.run_number }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
