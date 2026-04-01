@@ -1,0 +1,84 @@
+name: docker hello world
+on: push
+jobs:
+  my-job:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write
+      contents: read
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+        
+	  
+      - name: login azure
+        uses: azure/login@v3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Login to Azure Container Registry (ACR)
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: demo3.azurecr.io
+          username: ${{ secrets.ACR_USERNAME  }}
+          password: ${{ secrets.ACR_PASSWORD }}
+  
+      - name: build docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            demo3.azurecr.io/hello-python:v${{ github.run_number }}
+      - name: Set up Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Create and Start virtual environment and Install dependencies
+          pip install --upgrade pip
+          pip install -r requirements.txt
+	  
+	    - name: Upload artifact for deployment jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app
+          path: |
+            app.py
+            requirements.txt
+			
+	  
+	  
+	  deploy:
+	    	runs-on: ubuntu-latest
+	    	needs: build
+		    permissions:
+			id-token: write #This is required for requesting the JWT
+			contents: read #This is required for actions/checkout
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AD608E3C621C4316994EEB0673B1B329 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BD0807135EE045CD9D6A50ECD0322297 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A9FE36BC4D834AD29E519F206D384920 }}
+
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
+        with:
+          app-name: 'web-service'
+          slot-name: 'Production'
+
+			
+			
+	   
+     
+    
